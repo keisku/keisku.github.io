@@ -4,8 +4,9 @@ Feel free to open a [GitHub Issue](https://github.com/keisku/keisku.github.io/is
 
 ## About
 
-- [LinkedIn](https://www.linkedin.com/in/keisuke-umegaki-905a3818b/)
+- [GitHub](https://github.com/keisku)
 - [Twitter](https://twitter.com/keisku_)
+- [LinkedIn](https://www.linkedin.com/in/keisuke-umegaki-905a3818b/)
 
 ## Blog
 

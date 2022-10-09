@@ -16,7 +16,7 @@ Red Hat explains "container" as below.
 
 ### unshare
 
-The unshare command creates new namespaces and then executes the specified program(default: /bin/sh)[^3].
+The unshare command creates new namespaces and then executes the specified program(default: `/bin/sh`)[^3].
 
 ### nsenter
 
@@ -114,7 +114,7 @@ PID   USER     TIME  COMMAND
 
 ### Network interfaces(net namespace) / network_namespaces(7)[^7]
 
-Network namespaces provide isolation of the system resources associated with networking: network devices, IPv4 and IPv6 protocol stacks, IP routing tables, firewall rules, the /proc/net directory (which is a symbolic link to /proc/PID/net), the /sys/class/net directory, various files under /proc/sys/net, port numbers (sockets), and so on. In addition, network namespaces isolate the UNIX domain abstract socket namespace.
+Network namespaces provide isolation of the system resources associated with networking: network devices, IPv4 and IPv6 protocol stacks, IP routing tables, firewall rules, the `/proc/net` directory (which is a symbolic link to `/proc/PID/net`), the `/sys/class/net` directory, various files under `/proc/sys/net`, port numbers (sockets), and so on. In addition, network namespaces isolate the UNIX domain abstract socket namespace.
 Generally speaking, an installation of Linux shares a single set of network interfaces and routing table entries. You can modify the routing table entries using policy routing, but that doesn’t fundamentally change the fact that the set of network interfaces and routing tables/entries are shared across the entire OS. With network namespaces, you can have different and separate instances of network interfaces and routing tables that operate independent of each other[^8].
 
 ```shell
@@ -252,7 +252,7 @@ key        semid      owner      perms      nsems
 
 ### Cgroups / cgroup_namespaces(7)[^14]
 
-Each cgroup namespace has its own set of cgroup root directories. These root directories are the base points for the relative locations displayed in the corresponding records in the /proc/[pid]/cgroup file. When a process creates a new cgroup namespace using clone(2) or unshare(2) with the CLONE_NEWCGROUP flag, its current cgroups directories become the cgroup root directories of the new namespace.
+Each cgroup namespace has its own set of cgroup root directories. These root directories are the base points for the relative locations displayed in the corresponding records in the `/proc/[pid]/cgroup` file. When a process creates a new cgroup namespace using clone(2) or unshare(2) with the CLONE_NEWCGROUP flag, its current cgroups directories become the cgroup root directories of the new namespace.
 
 See RedHat's blog for more information[^15].
 

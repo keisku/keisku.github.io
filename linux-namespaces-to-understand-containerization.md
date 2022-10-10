@@ -182,7 +182,16 @@ vagrant@vagrant:~$ cat /proc/$$/uid_map
       1000       1000          1
 ```
 
-### Mount (mnt namespace) / mount_namespaces(7)[^11]
+`/proc/<PID>/uid_map` and `/proc/<PID>/gid_map` consist of one or more lines, each of which contain three values separated by white space[^11].
+
+`ID-inside-ns` `ID-outside-ns` `length`
+
+Together, the ID-inside-ns and length values define a range of IDs inside the namespace that are to be mapped to an ID range of the same length outside the namespace. The ID-outside-ns value specifies the starting point of the outside range. How ID-outside-ns is interpreted depends on the whether the process opening the file /proc/PID/uid_map (or /proc/PID/gid_map) is in the same user namespace as the process PID[^11].
+
+- If the two processes are in the same namespace, then ID-outside-ns is interpreted as a user ID (group ID) in the parent user namespace of the process PID. The common case here is that a process is writing to its own mapping file (/proc/self/uid_map or /proc/self/gid_map).
+- If the two processes are in different namespaces, then ID-outside-ns is interpreted as a user ID (group ID) in the user namespace of the process opening /proc/PID/uid_map (/proc/PID/gid_map). The writing process is then defining the mapping relative to its own user namespace.
+
+### Mount (mnt namespace) / mount_namespaces(7)[^12]
 
 Mount namespaces provide isolation of the list of mounts seen by the processes in each namespace instance. Thus, the processes in each of the mount namespace instances will see distinct single-directory hierarchies.
 
@@ -224,11 +233,11 @@ Mounting the following directories from a host to a container can be dangerous:
 - Mounting host log directories into a container could enable an attacker to modify the logs to erase traces of their dastardly ddeds on that host.
 - In a Kubernetes environment, mounting `/var/log` can give access to the entire host filesystem to any user who has access to `kubectl  logs`. This is because container log files are symlinks from `/var/log` to elsewhere in the filesystemm, but there is nothing to stop the container from pointing the symlink at any other file.
 
-### Interprocess communication (IPC) / ipc_namespace(7)[^12]
+### Interprocess communication (IPC) / ipc_namespace(7)[^13]
 
 The two processes need to be members of the same inter-proces communications(IPC) namespace for them to have access to the same set of identifiers for these mechanisms. If you don't need your containers to be able to access one another's shared memory, they should be given their own IPC namespaces.
 
-See Marty Kalin's article for  more detail about IPC[^13].
+See Marty Kalin's article for  more detail about IPC[^14].
 
 ```shell
 vagrant@vagrant:~$ ipcmk -M 1024
@@ -257,11 +266,11 @@ key        shmid      owner      perms      bytes      nattch     status
 key        semid      owner      perms      nsems
 ```
 
-### Cgroups / cgroup_namespaces(7)[^14]
+### Cgroups / cgroup_namespaces(7)[^15]
 
 Each cgroup namespace has its own set of cgroup root directories. These root directories are the base points for the relative locations displayed in the corresponding records in the `/proc/[pid]/cgroup` file. When a process creates a new cgroup namespace using clone(2) or unshare(2) with the CLONE_NEWCGROUP flag, its current cgroups directories become the cgroup root directories of the new namespace.
 
-See RedHat's blog for more information[^15].
+See RedHat's blog for more information[^16].
 
 [^1]: https://www.redhat.com/en/topics/containers/whats-a-linux-container
 [^2]: https://www.redhat.com/en/topics/containers
@@ -273,8 +282,9 @@ See RedHat's blog for more information[^15].
 [^8]: https://blog.scottlowe.org/2013/09/04/introducing-linux-network-namespaces/
 [^9]: https://man7.org/linux/man-pages/man7/uts_namespaces.7.html
 [^10]: https://man7.org/linux/man-pages/man7/user_namespaces.7.html
-[^11]: https://man7.org/linux/man-pages/man7/mount_namespaces.7.html
-[^12]: https://man7.org/linux/man-pages/man7/ipc_namespaces.7.html
-[^13]: https://opensource.com/article/19/4/interprocess-communication-linux-storage?extIdCarryOver=true&sc_cid=701f2000001OH7JAAW
-[^14]: https://man7.org/linux/man-pages/man7/cgroup_namespaces.7.html
-[^15]: https://www.redhat.com/sysadmin/cgroups-part-two
+[^11]: https://lwn.net/Articles/532593/
+[^12]: https://man7.org/linux/man-pages/man7/mount_namespaces.7.html
+[^13]: https://man7.org/linux/man-pages/man7/ipc_namespaces.7.html
+[^14]: https://opensource.com/article/19/4/interprocess-communication-linux-storage?extIdCarryOver=true&sc_cid=701f2000001OH7JAAW
+[^15]: https://man7.org/linux/man-pages/man7/cgroup_namespaces.7.html
+[^16]: https://www.redhat.com/sysadmin/cgroups-part-two

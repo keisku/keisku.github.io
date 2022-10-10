@@ -217,6 +217,13 @@ proc on /proc type proc (rw,relatime)
 / # exit
 ```
 
+Mounting the following directories from a host to a container can be dangerous:
+
+- Mounting `/etc` would permit modifying the host's `/etc/passwd` file from a container, or messing with `cron` jobs, or `init`, or `systemd`.
+- Mounting `/bin` or similar directories such as `/usr/bin` or `/usr/sbin` would allow the container to write executables into the host directory.
+- Mounting host log directories into a container could enable an attacker to modify the logs to erase traces of their dastardly ddeds on that host.
+- In a Kubernetes environment, mounting `/var/log` can give access to the entire host filesystem to any user who has access to `kubectl  logs`. This is because container log files are symlinks from `/var/log` to elsewhere in the filesystemm, but there is nothing to stop the container from pointing the symlink at any other file.
+
 ### Interprocess communication (IPC) / ipc_namespace(7)[^12]
 
 The two processes need to be members of the same inter-proces communications(IPC) namespace for them to have access to the same set of identifiers for these mechanisms. If you don't need your containers to be able to access one another's shared memory, they should be given their own IPC namespaces.

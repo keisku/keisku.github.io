@@ -84,6 +84,29 @@ vagrant@vagrant:~$ docker inspect b137f6af4137 | jq .[].NetworkSettings.IPAddres
 
 PID namespaces isolate the process ID number space, meaning that processes in different PID namespaces can have the same PID. Most programs will not need access to / list other running processes. Without a PID namespace, the processes running inside a container would share the same ID space as those in other containers or on the host.
 
+This `bash` process belongs to pid ns marked as `4026531836`.
+
+```bash
+vagrant@vagrant:~$ ls -l /proc/$$/ns/pid
+lrwxrwxrwx 1 vagrant vagrant 0 Oct 14 13:17 /proc/2970591/ns/pid -> 'pid:[4026531836]'
+```
+
+Once we use pid namespace to isolate new `bash` process, we can see different ID and processes only in the pid namespace..
+
+```bash
+vagrant@vagrant:~$ sudo unshare --fork --pid --mount-proc bash
+root@vagrant:/home/vagrant# echo $$
+1
+root@vagrant:/home/vagrant# ls -l /proc/1/ns/pid
+lrwxrwxrwx 1 root root 0 Oct 14 13:24 /proc/1/ns/pid -> 'pid:[4026532593]'
+root@vagrant:/home/vagrant# ps ax
+    PID TTY      STAT   TIME COMMAND
+      1 pts/1    S      0:00 bash
+      8 pts/1    R+     0:00 ps ax
+```
+
+In different way to confirm it.
+
 ```shell
 # Without PID namespace
 vagrant@vagrant:~$ mkdir busybox-without-pid

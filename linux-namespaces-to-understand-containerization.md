@@ -8,6 +8,8 @@ Linux namespaces control what it can see. By putting a process in a namespace, y
 
 ### ccontainer
 
+Linux Kernel does not provide "container" feature, but "namespace" that presents an apparently independent resources.
+
 Red Hat explains "container" as below.
 - A Linux container is a set of 1 or more processes that are isolated from the rest of the system[^1].
 - Linux containers are technologies that allow you to package and isolate applications with their entire runtime environment—all of the files necessary to run. This makes it easy to move the contained application between environments (dev, test, production, etc.) while retaining full functionality[^2].
